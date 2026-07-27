@@ -2,7 +2,7 @@
 
 Catálogo web de mi colección de Star Wars en venta. **Venta local en San Juan, Puerto Rico.**
 
-🌐 **Sitio en vivo:** https://estebi123.github.io/star-wars-collection-/
+🌐 **Sitio en vivo:** https://starwarscollectionpr.github.io/star-wars-collection-/
 
 El sitio tiene buscador, filtros por tipo y episodio, galería de fotos, y un
 selector de idioma **Español / Inglés** (por defecto en Español).
