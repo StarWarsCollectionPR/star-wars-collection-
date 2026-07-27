@@ -1,4 +1,4 @@
-# Auto-generates index.html + WebP thumbnails (img/thumbs/) — rebuilt by GitHub Actions on push.
+# Auto-generates index.html + WebP thumbnails (img/thumbs/) - rebuilt by GitHub Actions on push.
 import json
 prods=json.load(open('products.json'))
 DATA=json.dumps(prods,separators=(',',':'))
@@ -211,15 +211,28 @@ setTimeout(handleHash,250);
 """
 
 FAVICON='<link rel="icon" type="image/svg+xml" href="favicon.svg"/>\n'
+CANON='<link rel="canonical" href="'+SITE+'"/>\n'
+def build_jsonld():
+    items=[]
+    for i,p in enumerate(prods,1):
+        photos=p.get('photos') or ['img/001-1.jpg']
+        prod={'@type':'Product','name':p.get('name',''),'image':SITE+photos[0],'url':SITE+'#'+p.get('id','')}
+        if p.get('line'): prod['brand']={'@type':'Brand','name':p['line']}
+        if p.get('price') is not None:
+            prod['offers']={'@type':'Offer','priceCurrency':'USD','price':p['price'],'availability':('https://schema.org/OutOfStock' if p.get('sold') else 'https://schema.org/InStock'),'url':SITE+'#'+p.get('id','')}
+        items.append({'@type':'ListItem','position':i,'item':prod})
+    data={'@context':'https://schema.org','@type':'ItemList','name':'Cantina Collectibles - Star Wars','itemListElement':items}
+    return '<script type="application/ld+json">'+json.dumps(data,ensure_ascii=False).replace('</','<\\/')+'</script>\n'
+JSONLD=build_jsonld()
 H=[]
 H.append('<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="utf-8"/>\n<meta name="viewport" content="width=device-width, initial-scale=1"/>\n')
-H.append('<title>Cantina Collectibles · San Juan, PR</title>\n'+FAVICON+META+'<style>'+STYLE+'</style>\n</head>\n<body>\n')
+H.append('<title>Cantina Collectibles · San Juan, PR</title>\n'+FAVICON+CANON+META+JSONLD+'<style>'+STYLE+'</style>\n</head>\n<body>\n')
 H.append('<header>\n<div class="langsw"><span class="lc" id="lang-es" onclick="setLang(\'es\')">ES</span><span class="lc" id="lang-en" onclick="setLang(\'en\')">EN</span></div>\n')
 H.append('<h1>Cantina Collectibles</h1>\n<div class="sub" id="subt"></div>\n<div class="share" id="share"><span class="shlbl" id="sh-lbl"></span><a class="shbtn wa" id="sh-wa" target="_blank" rel="noopener">WhatsApp</a><a class="shbtn tg2" id="sh-tg" target="_blank" rel="noopener">Telegram</a><a class="shbtn fb" id="sh-fb" target="_blank" rel="noopener">Facebook</a><button class="shbtn cp" id="sh-cp" onclick="copyLink()"></button></div>\n</header>\n')
 H.append('<div class="wrap">\n<div class="controls">\n<input id="q" type="search"/>\n')
 H.append('<div class="row"><span class="lbl" id="l-sort"></span>\n<select id="sort">\n<option value="featured"></option>\n<option value="price-asc"></option>\n<option value="price-desc"></option>\n<option value="name-asc"></option>\n<option value="name-desc"></option>\n</select>\n</div>\n')
 H.append('<div class="row" id="cats"><span class="lbl" id="l-type"></span></div>\n<div class="row" id="eps"><span class="lbl" id="l-movie"></span></div>\n</div>\n')
-H.append('<div class="count" id="count"></div>\n<div class="grid" id="grid"></div>\n</div>\n')
+H.append('<div class="count" id="count"></div>\n<noscript><div style="max-width:640px;margin:14px auto;padding:12px 16px;border:1px solid #262c38;border-radius:10px;color:#e9edf4;text-align:center;font-size:14px">Activa JavaScript para ver el cat&aacute;logo &middot; Please enable JavaScript to view the catalog.</div></noscript>\n<div class="grid" id="grid"></div>\n</div>\n')
 H.append('<footer id="foot"></footer>\n')
 H.append('<div class="lb" id="lb"><span class="x" onclick="closeLb()">&times;</span><img id="lbimg" src=""/><div class="nav"><span onclick="lbStep(-1)">&#8249;</span><span onclick="lbStep(1)">&#8250;</span></div></div>\n<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>\n<div class="toast" id="toast"></div>\n')
 H.append('<script>'+SCRIPT+'</script>\n</body>\n</html>')
