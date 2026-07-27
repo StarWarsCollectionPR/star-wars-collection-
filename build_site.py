@@ -1,10 +1,10 @@
 import json
 prods=json.load(open('products.json'))
 DATA=json.dumps(prods,separators=(',',':'))
-CONTACT={"telegram":"estebi1234","email":""}
+CONTACT={"telegram":"cosmicfellow","email":""}
 CJSON=json.dumps(CONTACT)
 N=len(prods)
-SITE="https://estebi123.github.io/star-wars-collection-/"
+SITE="https://starwarscollectionpr.github.io/star-wars-collection-/"
 DESC="Colección Star Wars en venta · San Juan, Puerto Rico · %d piezas: figuras, vehículos, sets coleccionables y más."%N
 META=('<meta name="description" content="'+DESC+'"/>\n'
  '<meta property="og:title" content="Cantina Collectibles — Colección Star Wars"/>\n'
