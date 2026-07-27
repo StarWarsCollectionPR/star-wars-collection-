@@ -6,6 +6,7 @@ on:
     paths:
       - 'products.json'
       - 'build_site.py'
+      - 'img/**'
 
 permissions:
   contents: write
@@ -18,16 +19,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - name: Regenerate index.html from products.json
+      - name: Install image library
+        run: pip install Pillow
+      - name: Regenerate index.html + thumbnails from products.json
         run: python build_site.py
-      - name: Commit regenerated index.html if it changed
+      - name: Commit regenerated files if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          git add index.html img/thumbs
           if git diff --staged --quiet; then
-            echo "No changes to index.html"
+            echo "No changes to commit"
           else
-            git commit -m "Auto-rebuild index.html [skip ci]"
+            git commit -m "Auto-rebuild index.html + thumbnails [skip ci]"
             git push
           fi
