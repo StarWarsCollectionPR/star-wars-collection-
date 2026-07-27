@@ -5,7 +5,7 @@ Memoria del proyecto para Claude / Cowork. Léeme antes de hacer cambios.
 ## Qué es esto
 Catálogo web estático de una colección de Star Wars en venta. Venta **local en
 Puerto Rico (San Juan), en persona, sin envío**. Publicado con GitHub Pages en:
-https://estebi123.github.io/star-wars-collection-/
+https://starwarscollectionpr.github.io/star-wars-collection-/
 
 ## Archivos
 - `products.json` — los datos del catálogo (la fuente de verdad). Editar aquí.
