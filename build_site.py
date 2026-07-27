@@ -1,3 +1,4 @@
+# Auto-generates index.html + WebP thumbnails (img/thumbs/) — rebuilt by GitHub Actions on push.
 import json
 prods=json.load(open('products.json'))
 DATA=json.dumps(prods,separators=(',',':'))
