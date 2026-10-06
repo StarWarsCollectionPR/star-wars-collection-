@@ -1,0 +1,1570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>eBay Listings — All Items</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap">
+<style>
+:root {
+  --bg: #f4f2ed;
+  --surface: #ffffff;
+  --surface-2: #edeae4;
+  --border: #d8d3cb;
+  --fg: #1a1c23;
+  --muted: #737688;
+  --accent: #7c5e1a;
+  --accent-bg: #f5e9c8;
+  --accent-border: #d4a84a;
+  --badge-bg: #1a1c23;
+  --badge-fg: #f4f2ed;
+  --green: #2e7d50;
+  --green-bg: #e4f3ea;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0e14; --surface: #14161e; --surface-2: #1c1f2a;
+    --border: #272b38; --fg: #e2ddd0; --muted: #8a8fa8;
+    --accent: #c9a94f; --accent-bg: #221c0e; --accent-border: #9a7a28;
+    --badge-bg: #e2ddd0; --badge-fg: #0c0e14;
+    --green: #4caf78; --green-bg: #0e2318;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c0e14; --surface: #14161e; --surface-2: #1c1f2a;
+  --border: #272b38; --fg: #e2ddd0; --muted: #8a8fa8;
+  --accent: #c9a94f; --accent-bg: #221c0e; --accent-border: #9a7a28;
+  --badge-bg: #e2ddd0; --badge-fg: #0c0e14;
+  --green: #4caf78; --green-bg: #0e2318;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; line-height: 1.55; margin: 0; padding: 28px 16px 48px; }
+.page-wrap { max-width: 980px; margin-inline: auto; }
+header { margin-bottom: 22px; }
+.eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(24px, 4.5vw, 36px); font-weight: 700; line-height: 1.1; text-wrap: balance; margin: 0 0 6px; letter-spacing: -0.01em; }
+.subtitle { color: var(--muted); font-size: 13px; }
+
+/* Filter bar */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; align-items: center; }
+.search-input { flex: 1 1 180px; min-width: 140px; padding: 7px 11px; font-size: 13px; font-family: inherit; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; color: var(--fg); outline: none; }
+.search-input:focus { border-color: var(--accent-border); }
+.filter-group { display: flex; flex-wrap: wrap; gap: 5px; }
+.f-btn { padding: 5px 11px; font-size: 12px; font-weight: 500; font-family: inherit; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); cursor: pointer; transition: background .1s, color .1s, border-color .1s; }
+.f-btn:hover, .f-btn.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+.count-bar { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+/* Grid */
+.grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 620px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+/* Card */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+.card-photo { width: 100%; height: 180px; background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.card-photo img { width: 100%; height: 100%; object-fit: contain; padding: 10px; }
+.card-photo .photo-nav { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; }
+.card-photo .photo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background .15s; }
+.card-photo .photo-dot.active { background: var(--accent); }
+.card-photo .photo-prev, .card-photo .photo-next { position: absolute; top: 50%; transform: translateY(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 5px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; color: var(--muted); opacity: 0; transition: opacity .15s; user-select: none; }
+.card-photo .photo-prev { left: 6px; }
+.card-photo .photo-next { right: 6px; }
+.card-photo:hover .photo-prev, .card-photo:hover .photo-next { opacity: 1; }
+.card-head { padding: 13px 13px 11px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; }
+.rank { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--badge-bg); color: var(--badge-fg); display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.card-title-wrap { flex: 1; min-width: 0; }
+.item-name { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; line-height: 1.25; margin: 0 0 6px; text-wrap: balance; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); font-weight: 500; }
+.tag.price { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); font-weight: 600; }
+.tag.cond-new  { background: var(--green-bg); color: var(--green); border-color: transparent; }
+.tag.cond-other { background: var(--accent-bg); color: var(--accent); border-color: transparent; }
+.tag.cond-used  { background: var(--surface-2); color: var(--muted); border-color: transparent; }
+.card-body { padding: 12px 13px; display: flex; flex-direction: column; gap: 11px; flex: 1; }
+.field-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.copy-row { display: flex; gap: 7px; align-items: flex-start; }
+.copy-box { flex: 1; min-width: 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; font-size: 13px; font-family: inherit; color: var(--fg); line-height: 1.5; white-space: pre-wrap; word-break: break-word; cursor: text; user-select: text; }
+.copy-btn { flex-shrink: 0; padding: 6px 10px; font-size: 12px; font-weight: 500; font-family: inherit; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); cursor: pointer; transition: background .1s, color .1s, border-color .1s; white-space: nowrap; line-height: 1.4; }
+.copy-btn:hover { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+.copy-btn.ok { background: var(--green-bg); color: var(--green); border-color: transparent; }
+.char-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 3px; }
+.char-count { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.char-count.warn { color: #c04040; }
+.char-track { width: 60px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.char-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+.char-fill.warn { background: #c04040; }
+.no-results { grid-column: 1/-1; text-align: center; padding: 48px 16px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <header>
+    <p class="eyebrow">Star Wars Collection PR · Cantina Collectibles</p>
+    <h1>eBay Listings — All 116 Items</h1>
+    <p class="subtitle">Copy each title and description directly into eBay. Titles are ≤80 characters.</p>
+  </header>
+
+  <div class="filter-bar">
+    <input class="search-input" id="search" type="search" placeholder="Search by name or title…" oninput="applyFilters()">
+    <div class="filter-group" id="price-filters">
+      <button class="f-btn active" data-min="0" onclick="setPriceFilter(this)">All prices</button>
+      <button class="f-btn" data-min="42" onclick="setPriceFilter(this)">$42+</button>
+      <button class="f-btn" data-min="30" onclick="setPriceFilter(this)">$30+</button>
+      <button class="f-btn" data-min="22" onclick="setPriceFilter(this)">$22+</button>
+    </div>
+  </div>
+  <p class="count-bar" id="count-bar">Showing 116 of 116 items</p>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const listings = [
+const BASE = "https://starwarscollectionpr.github.io/star-wars-collection-/";
+const PHOTOS = {
+  "001":2,"002":2,"003":2,"004":2,"005":2,"006":2,"007":2,"008":2,"009":2,"010":2,
+  "011":2,"012":1,"013":2,"014":1,"015":2,"016":1,"017":2,"018":2,"019":2,"020":2,
+  "021":2,"022":2,"023":2,"024":1,"025":1,"026":2,"027":2,"028":2,"029":2,"030":2,
+  "031":2,"032":2,"033":2,"034":1,"035":3,"036":2,"037":2,"038":2,"039":2,"040":2,
+  "041":2,"042":2,"043":2,"044":2,"045":2,"046":2,"047":2,"048":2,"049":2,"050":2,
+  "051":2,"052":1,"053":2,"054":2,"055":2,"056":2,"058":2,"059":2,"060":2,"061":2,
+  "062":2,"063":2,"064":2,"065":2,"066":2,"067":2,"068":2,"069":2,"070":2,"071":2,
+  "072":3,"073":2,"074":2,"075":2,"076":2,"077":2,"078":2,"079":2,"080":2,"081":2,
+  "082":2,"083":2,"084":2,"085":2,"086":2,"087":2,"088":2,"089":2,"090":2,"091":2,
+  "092":2,"093":2,"094":2,"095":2,"096":2,"097":2,"098":2,"099":2,"100":2,"101":2,
+  "102":2,"103":2,"104":2,"105":2,"106":2,"107":2,"108":2,"109":2,"110":2,"111":2,
+  "112":2,"113":2,"114":2,"115":2,"116":2,"117":2
+};
+
+const listings = [
+  {
+    rank:1, id:"019", name:"PEZ Star Wars Collector's Set — Limited Edition",
+    price:72, year:2005, condLabel:"New", condClass:"cond-new",
+    condEbay:"New — factory sealed, shrink wrap intact",
+    title:"Star Wars PEZ Collector's Set 9 Dispensers 2005 Limited Edition Sealed",
+    desc:`Factory sealed Star Wars PEZ Collector's Set (2005). Limited edition with 9 dispensers, individually numbered out of 250,000 (Item 961). Original shrink wrap is fully intact — never opened. A grail piece for Star Wars and PEZ collectors alike.
+
+Condition: Factory sealed. Shrink wrap intact. Never opened.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:2, id:"027", name:"General Grievous — Unleashed",
+    price:66, year:2005, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — still-sealed card (MOSC), light shelf wear",
+    title:"Star Wars General Grievous Unleashed ROTS 2005 MOSC Hasbro Figure #85481",
+    desc:`Star Wars General Grievous Unleashed figure (2005) — Revenge of the Sith, Hasbro #85481. Mint on still-sealed card (MOSC) with light shelf wear. The Unleashed line features highly detailed dynamic sculpts and is among the most collected Star Wars figure lines.
+
+Condition: MOSC (Mint on Still-sealed Card). Light shelf wear on card. Figure never removed.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:3, id:"006", name:"Darth Vader — Giant PEZ (Limited Edition)",
+    price:58, year:2005, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — new in box, minor box wear, chrome mint",
+    title:"Star Wars Darth Vader Giant PEZ 12in Limited Edition Light-Up Eyes Sound 2005",
+    desc:`Star Wars Darth Vader Giant Limited Edition PEZ dispenser (2005). Over 12 inches tall with polished chrome finish, light-up eyes, and electronic sound effects. New in box with minor shelf wear; chrome finish is pristine and untouched.
+
+A unique and rare collectible combining two iconic brands. Impressive display piece.
+
+Condition: New in box. Minor edge/corner wear on outer box. Chrome finish mint.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:4, id:"035", name:"Princess Leia on Speeder Bike 12\" — Endor",
+    price:58, year:2003, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, outer box wear/crease, top clamshell crack",
+    title:"Star Wars ROTJ Princess Leia Speeder Bike 12in Endor Target Excl Boxed 2003",
+    desc:`Star Wars Princess Leia on Speeder Bike 12-inch set (2003) — Return of the Jedi Endor Forest Chase. Target exclusive (No. 26700). Figure and speeder bike appear sealed inside box.
+
+Box condition: Wear and creasing on outer box. Clear plastic top panel has a small crack. Contents appear intact inside.
+
+Note: Rare Target-exclusive piece. Review photos before purchasing.
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:5, id:"050", name:"Chewbacca — Unleashed",
+    price:54, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — MOSC, card edge and corner wear",
+    title:"Star Wars Chewbacca Unleashed 2005 MOSC Hasbro Collectible Figure",
+    desc:`Star Wars Chewbacca Unleashed figure (2005) — part of Hasbro's highly collectible Unleashed line, featuring dramatic dynamic sculpts. Mint on still-sealed card (MOSC) with card edge and corner wear.
+
+A powerful display piece for any serious Star Wars collector.
+
+Condition: MOSC. Card edge and corner wear. Figure never removed.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:6, id:"026", name:"Commemorative Tin #4 — A New Hope (30th Anniversary)",
+    price:50, year:2007, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed tin, outer box wear, figures sealed in tin",
+    title:"Star Wars 30th Anniv Tin #4 A New Hope Sandtrooper Leia Vader C-3PO 2007",
+    desc:`Star Wars 30th Anniversary Commemorative Tin #4 of 6 — A New Hope (2007). Includes 4 figures sealed in tin: Sandtrooper, Princess Leia, Darth Vader, and C-3PO.
+
+Outer box shows shelf wear. Tin and figures are in good condition.
+
+Condition: Used. Outer box wear. Tin intact. Figures sealed in tin.
+Year: 2007
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:7, id:"043", name:"REX — Star Tours Pilot Droid (Disney Exclusive)",
+    price:50, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded, Disney exclusive, card edge wear",
+    title:"Star Wars REX Star Tours Pilot Droid Disney Park Exclusive Carded Figure 2002",
+    desc:`Star Wars REX Star Tours Pilot Droid figure (2002) — Disney Star Tours theme park exclusive. Still on original card with some card edge wear. REX is the beloved animatronic pilot from Disney's original Star Tours attraction.
+
+Hard to find outside Disney theme park channels.
+
+Condition: Carded. Card edge wear. Figure sealed on card.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:8, id:"002", name:"Commemorative Tin #3 — Episode III (30th Anniversary)",
+    price:42, year:2006, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — sealed tin, outer display box has shelf wear",
+    title:"Star Wars 30th Anniv Tin #3 Episode III Mace Windu Yoda Anakin AT-RT 2006",
+    desc:`Star Wars 30th Anniversary Commemorative Tin #3 of 6 — Episode III (2006). Includes 4 figures sealed inside: Mace Windu, Yoda, Anakin Skywalker, and AT-RT Driver.
+
+Outer display box shows shelf wear. Tin is intact and figures are factory-sealed inside.
+
+Condition: Figures sealed in tin. Outer display box shows shelf wear.
+Year: 2006
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:9, id:"003", name:"AT-AT — All Terrain Armored Transport (Action Fleet)",
+    price:42, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box creasing and window scuffs",
+    title:"Star Wars AT-AT Micro Machines Action Fleet ESB Boxed w Display Stand 2002",
+    desc:`Star Wars AT-AT All Terrain Armored Transport — Micro Machines Action Fleet (2002), Empire Strikes Back. Includes original display stand. Detailed miniature of one of the saga's most iconic vehicles.
+
+Box condition: Creasing and window scuffs. Vehicle and figures appear intact.
+
+Condition: Boxed. Box creasing and window scuffs. Includes display stand.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:10, id:"010", name:"TIE Advanced x1 — Darth Vader's Fighter (Action Fleet)",
+    price:42, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box creasing and window wear",
+    title:"Star Wars TIE Advanced x1 Darth Vader Micro Machines Action Fleet Boxed 2002",
+    desc:`Star Wars TIE Advanced x1 — Darth Vader's personal fighter — Micro Machines Action Fleet (2002), A New Hope. Includes original display stand. Highly detailed collectible-scale model of this iconic ship.
+
+Box condition: Creasing and window wear. Vehicle and figures appear intact.
+
+Condition: Boxed. Box creasing and window wear. Includes display stand.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:11, id:"023", name:"Grand Moff Tarkin 12\" + Interrogator Droid",
+    price:42, year:1997, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box wear/creasing, figure sealed inside",
+    title:"Star Wars Grand Moff Tarkin 12in + Interrogator Droid ANH 1997 Box #27905",
+    desc:`Star Wars Grand Moff Tarkin 12-inch figure with Interrogator Droid — A New Hope, Hasbro Action Collection 1997, item #27905. Figure is factory sealed inside the box.
+
+Grand Moff Tarkin is one of the rarer and more sought-after characters in the 12-inch Action Collection line.
+
+Condition: Boxed. Box wear and creasing. Figure sealed inside.
+Year: 1997
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:12, id:"029", name:"Solar Sailer — Count Dooku's Ship (Action Fleet)",
+    price:42, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box wear/creasing",
+    title:"Star Wars Solar Sailer Count Dooku Micro Machines Action Fleet AOTC Box 2002",
+    desc:`Star Wars Count Dooku's Solar Sailer — Micro Machines Action Fleet (2002), Attack of the Clones. Beautifully designed miniature with folding sail panels. A harder-to-find entry in the Action Fleet line.
+
+Box condition: Box wear and creasing. Vehicle appears in good shape.
+
+Condition: Boxed. Box wear and creasing. Vehicle intact.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:13, id:"030", name:"Barriss Offee 12\" — Revenge of the Sith",
+    price:42, year:2005, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — boxed clamshell, near mint",
+    title:"Star Wars Barriss Offee 12in Figure Revenge of the Sith 2005 Near Mint Boxed",
+    desc:`Star Wars Barriss Offee 12-inch figure (2005) — Revenge of the Sith. Sealed in original clamshell box in near-mint condition. A rarer character in the 12-inch scale — harder to find in this condition.
+
+Condition: Near mint, boxed in clamshell. Box in excellent shape.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:14, id:"032", name:"Obi-Wan Kenobi's Jedi Starfighter — Attack of the Clones",
+    price:42, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box wear/creasing",
+    title:"Star Wars Obi-Wan Kenobi Jedi Starfighter Attack of the Clones 2002 #84869",
+    desc:`Star Wars Obi-Wan Kenobi's Jedi Starfighter (2002) — Attack of the Clones, Hasbro No. 84869. Converts between flight and fight mode. Classic prequel-era vehicle.
+
+Box shows wear and creasing.
+
+Condition: Boxed. Box wear and creasing.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:15, id:"001", name:"Obi-Wan Kenobi & Darth Vader — Final Duel (Silver Anniversary)",
+    price:36, year:2002, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — new in box, minor edge/corner wear on outer box",
+    title:"Star Wars Silver Anniversary Obi-Wan Darth Vader Final Duel 2-Pack 2002 NIB",
+    desc:`Star Wars Silver Anniversary (1977–2002) Obi-Wan Kenobi & Darth Vader — Final Duel 2-pack (2002). Celebrates the 25th anniversary of the original film. Figures are sealed inside the box.
+
+Box shows minor edge and corner wear with light dust on the display case.
+
+Condition: New in box. Minor edge/corner wear on outer box. Light dust on case.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:16, id:"005", name:"Episode I Customizable Card Game",
+    price:36, year:1999, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — appears sealed, light shelf wear on box",
+    title:"Star Wars Episode I Customizable Card Game Decipher 4-Deck Set Sealed 1999",
+    desc:`Star Wars Episode I Customizable Card Game by Decipher (1999). Four pre-built 40-card decks for 2–4 players. Box appears factory sealed with light shelf wear.
+
+Condition: Appears sealed. Light shelf wear on outer box.
+Year: 1999
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:17, id:"007", name:"Jango Fett — Character Collectible",
+    price:36, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box edge/corner wear, light shelf wear",
+    title:"Star Wars Jango Fett Attack of the Clones Character Collectible Boxed 2002",
+    desc:`Star Wars Jango Fett character collectible figure (2002) — Attack of the Clones. Boxed with edge and corner wear and light shelf wear. Contents appear intact inside.
+
+Condition: Boxed. Box edge/corner wear and light shelf wear.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:18, id:"009", name:"Geonosian War Room (2 of 2) — Nute Gunray, Shu Mai, Passel Argente",
+    price:36, year:2003, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box wear, tape on flaps",
+    title:"Star Wars AOTC Geonosian War Room 2/2 Nute Gunray Shu Mai 3-Pack Boxed 2003",
+    desc:`Star Wars Attack of the Clones Geonosian War Room 3-figure set #2 of 2 (2003). Includes Nute Gunray, Shu Mai, and Passel Argente with Senate table diorama. Figures appear sealed inside.
+
+Box condition: Wear and tape on flaps.
+
+Condition: Boxed. Box wear, tape on flaps. Figures sealed inside.
+Year: 2003
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:19, id:"013", name:"General Grievous — 12\" Figure",
+    price:36, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, window and box wear, light dust",
+    title:"Star Wars General Grievous 12-inch Figure Revenge of the Sith Boxed 2005",
+    desc:`Star Wars General Grievous 12-inch figure (2005) — Revenge of the Sith. Imposing multi-armed Separatist general with detailed sculpt. Box shows window and general wear with light dust; figure appears intact inside.
+
+Condition: Boxed. Box/window wear and light dust.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:20, id:"015", name:"Naboo Foam-Firing Blaster — Episode I Roleplay",
+    price:36, year:1999, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box wear, bubble intact",
+    title:"Star Wars Episode I Naboo Foam-Firing Blaster Roleplay Weapon Boxed 1999",
+    desc:`Star Wars Episode I Naboo foam-firing blaster (1999), item No. 57127. Full-size roleplay weapon still in original packaging. Box shows wear; bubble/inner packaging intact.
+
+Condition: Boxed. Box wear. Bubble intact.
+Year: 1999
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:21, id:"036", name:"Complete Galaxy: Dagobah with Yoda — Power of the Force",
+    price:36, year:1998, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box worn/creased",
+    title:"Star Wars POTF Complete Galaxy Dagobah with Yoda Kenner Boxed 1998",
+    desc:`Star Wars Power of the Force Complete Galaxy: Dagobah with Yoda — Kenner (1998). Planet-shaped playset opens to reveal a diorama scene. Box is worn and creased; contents appear complete.
+
+Condition: Boxed. Box worn and creased.
+Year: 1998
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:22, id:"072", name:"Loose Figure & Speeder Lot — Darth Maul, Darth Vader & more",
+    price:36, year:2000, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — loose, played-with condition, see photos",
+    title:"Star Wars Loose Figure Speeder Lot Darth Maul Darth Vader Mixed 2000s",
+    desc:`Star Wars loose figure and speeder lot — includes Darth Maul, Darth Vader, and more from various lines. Played-with condition; see photos for exact contents.
+
+Priced as a lot. Great for display, customs, or parts.
+
+Condition: Loose (no packaging). Played-with condition. See photos.
+Year: 2000s
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:23, id:"073", name:"LEGO Star Wars Landspeeder (built) — Set 7110",
+    price:36, year:1999, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — built loose, complete as shown, no box",
+    title:"Star Wars LEGO Landspeeder Set 7110 Built Complete No Box 1999",
+    desc:`Star Wars LEGO Landspeeder (Set 7110, 1999) — fully built and complete as shown. No box or instructions included. A classic first-wave Star Wars LEGO set from the original 1999 release.
+
+Condition: Built loose. Complete. No box or instructions.
+Year: 1999
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:24, id:"012", name:"Trade Federation Battleship — Episode I (Die-Cast)",
+    price:30, year:1999, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded, card edge wear and creasing",
+    title:"Star Wars Episode I Trade Federation Battleship Die-Cast Micro Machines MOC",
+    desc:`Star Wars Episode I Trade Federation Battleship die-cast vehicle (1999) — Micro Machines. Still on original card with some edge wear and creasing.
+
+Condition: Carded (MOC). Card edge wear and creasing.
+Year: 1999
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:25, id:"020", name:"Nexu — Deluxe Figure (Snapping Jaw & Attack Roar)",
+    price:30, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Nexu Deluxe Figure Snapping Jaw Attack Roar MOC 2002",
+    desc:`Star Wars Attack of the Clones Nexu Deluxe figure (2002). Creature from the Geonosian arena with snapping jaw and attack roar action features. Still on original card with edge wear; bubble intact.
+
+Condition: Carded (MOC). Card edge wear. Bubble intact.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:26, id:"028", name:"Luke Skywalker's Snowspeeder — Action Fleet (ESB)",
+    price:30, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box wear, window crease",
+    title:"Star Wars ESB Luke Skywalker Snowspeeder Micro Machines Action Fleet Box 2002",
+    desc:`Star Wars Luke Skywalker's Snowspeeder — Micro Machines Action Fleet (2002), Empire Strikes Back. Boxed with box wear and window crease. Vehicle appears intact inside.
+
+Condition: Boxed. Box wear and window crease.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:27, id:"031", name:"Chewbacca 12\" — Action Collection (Power of the Force)",
+    price:30, year:1999, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box worn/creased, figure sealed inside",
+    title:"Star Wars Chewbacca 12in Action Collection Power of the Force Boxed 1999",
+    desc:`Star Wars Chewbacca 12-inch Action Collection figure (1999) — Power of the Force, over 13 inches tall. Figure appears sealed inside the box. Box is worn and creased.
+
+Condition: Boxed. Box worn and creased. Figure sealed inside.
+Year: 1999
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:28, id:"033", name:"Jabba's Skiff Guards — Klaatu, Barada, Nikto (Cinema Scenes)",
+    price:30, year:1998, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box wear, figures sealed inside",
+    title:"Star Wars POTF Cinema Scenes Jabba Skiff Guards Klaatu Barada Nikto 1998",
+    desc:`Star Wars Power of the Force Cinema Scenes 3-pack — Jabba's Skiff Guards: Klaatu, Barada, and Nikto (1998). Figures appear sealed inside box. Box shows shelf wear.
+
+Condition: Boxed. Box wear. Figures sealed inside.
+Year: 1998
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:29, id:"038", name:"Snowtrooper — Deluxe with E-Web Heavy Repeating Blaster",
+    price:30, year:1997, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge and corner wear, bubble intact",
+    title:"Star Wars POTF Snowtrooper Deluxe E-Web Heavy Repeating Blaster MOC 1997",
+    desc:`Star Wars Power of the Force Deluxe Snowtrooper with E-Web Heavy Repeating Blaster (1997). Still on original card. Card shows edge and corner wear; bubble is intact and figure is sealed.
+
+Condition: Carded (MOC). Card edge and corner wear. Bubble intact.
+Year: 1997
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:30, id:"039", name:"Princess Leia — with Sail Barge Cannon (Power of the Jedi)",
+    price:30, year:2001, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear, bubble intact",
+    title:"Star Wars Power of the Jedi Princess Leia Sail Barge Cannon MOC 2001",
+    desc:`Star Wars Power of the Jedi Princess Leia with Sail Barge Cannon figure (2001). Still on original card with edge wear; bubble intact and figure sealed.
+
+Condition: Carded (MOC). Card edge wear. Bubble intact.
+Year: 2001
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:31, id:"049", name:"Luke Skywalker — Unleashed",
+    price:30, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge and corner wear",
+    title:"Star Wars Unleashed Luke Skywalker Figure MOC 2005 Hasbro",
+    desc:`Star Wars Unleashed Luke Skywalker figure (2005). Dynamic Jedi battle pose. Still on original card with edge and corner wear.
+
+Condition: Carded (MOC). Card edge and corner wear. Figure sealed on card.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:32, id:"056", name:"Stormtrooper — Collector Timepiece (Flip-Open Watch)",
+    price:30, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded watch, clamshell wear, old price sticker",
+    title:"Star Wars Stormtrooper Collector Timepiece Flip-Open Watch Carded MOC 2005",
+    desc:`Star Wars Stormtrooper Collector Timepiece flip-open watch (2005). Still in original clamshell card packaging with some wear and an old price sticker on the front. A unique Star Wars novelty collectible.
+
+Condition: Carded watch. Clamshell wear. Old price sticker on front.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:33, id:"008", name:"Luke Skywalker & Princess Leia — Swing to Freedom (Silver Anniversary)",
+    price:26, year:2002, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — new in box, minor edge wear, light dust",
+    title:"Star Wars Silver Anniversary Luke Leia Swing to Freedom 2-Pack 2002 NIB",
+    desc:`Star Wars Silver Anniversary (1977–2002) Luke Skywalker & Princess Leia — Swing to Freedom 2-pack (2002). New in box with minor edge wear and light dust. Figures sealed inside.
+
+Condition: New in box. Minor edge wear. Light dust on case.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:34, id:"011", name:"Han Solo & Chewbacca — Death Star Escape (Silver Anniversary)",
+    price:26, year:2002, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — new in box, minor edge wear, light dust",
+    title:"Star Wars Silver Anniversary Han Solo Chewbacca Death Star Escape 2002 NIB",
+    desc:`Star Wars Silver Anniversary (1977–2002) Han Solo & Chewbacca — Death Star Escape 2-pack (2002). New in box with minor edge wear and light dust. Figures sealed inside.
+
+Condition: New in box. Minor edge wear. Light dust on case.
+Year: 2002
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:35, id:"017", name:"Yoda — Vintage Original Trilogy Collection (ESB)",
+    price:26, year:2004, condLabel:"New (Other)", condClass:"cond-other",
+    condEbay:"New (Other) — MOSC in protective case, near mint",
+    title:"Star Wars Yoda Vintage Original Trilogy Collection ESB MOSC Case 2004",
+    desc:`Star Wars Yoda Vintage Original Trilogy Collection (2004) — Empire Strikes Back vintage-style card. Stored in a protective case. Near-mint condition.
+
+Condition: MOSC in protective case. Near mint. Vintage-style card.
+Year: 2004
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:36, id:"021", name:"General Grievous — Force Battlers",
+    price:26, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear, light dust",
+    title:"Star Wars ROTS General Grievous Force Battlers Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith General Grievous Force Battlers figure (2005). Large action figure with battle-action features. Carded with edge wear and light dust.
+
+Condition: Carded (MOC). Card edge wear. Light dust.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:37, id:"037", name:"Princess Leia Organa — Epic Force (Power of the Force)",
+    price:26, year:1998, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, box wear, case yellowing",
+    title:"Star Wars POTF Princess Leia Organa Epic Force 360-Degree Figure Boxed 1998",
+    desc:`Star Wars Power of the Force Princess Leia Organa — Epic Force rotating 360° figure (1998, Kenner). Boxed with general wear and some yellowing on the display case from age. Figure appears complete inside.
+
+Condition: Boxed. Box wear. Case yellowing.
+Year: 1998
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:38, id:"045", name:"Holographic Yoda — Toys R Us Exclusive",
+    price:26, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), light shelf wear",
+    title:"Star Wars ROTS Holographic Yoda Toys R Us Exclusive Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Holographic Yoda — Toys R Us exclusive (2005). Translucent blue hologram sculpt. Carded with light shelf wear. A fan-favorite variant figure.
+
+Condition: Carded (MOC). Light shelf wear.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:39, id:"058", name:"Clone Wars Value Pack — Anakin & Clone Trooper Lieutenant",
+    price:26, year:2003, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded 2-pack (MOC), card edge wear",
+    title:"Star Wars Clone Wars Animated Anakin Clone Trooper Lt 2-Pack MOC 2003",
+    desc:`Star Wars Clone Wars animated series value 2-pack (2003) — Anakin Skywalker and Clone Trooper Lieutenant. Still on original card with edge wear.
+
+Condition: Carded 2-pack (MOC). Card edge wear.
+Year: 2003
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:40, id:"022", name:"Darth Vader — Force Battlers (Slashing Attack)",
+    price:24, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear, light dust",
+    title:"Star Wars Darth Vader Force Battlers Slashing Attack Figure MOC 2005",
+    desc:`Star Wars Force Battlers Darth Vader with Slashing Attack action (2005). Large, dramatic figure on original card with edge wear and light dust.
+
+Condition: Carded (MOC). Card edge wear. Light dust.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:41, id:"046", name:"Emperor Palpatine — Power of the Jedi",
+    price:24, year:2001, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars Power of the Jedi Emperor Palpatine Figure MOC 2001",
+    desc:`Star Wars Power of the Jedi Emperor Palpatine figure (2001). Still on original card with card edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2001
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:42, id:"062", name:"Asajj Ventress — Clone Wars (Animated)",
+    price:24, year:2003, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars Clone Wars Animated Asajj Ventress Figure MOC 2003",
+    desc:`Star Wars Clone Wars animated series Asajj Ventress figure (2003). A hard-to-find villain character from the early Clone Wars line. Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2003
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:43, id:"079", name:"General Grievous — Sneak Preview (ROTS)",
+    price:24, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS General Grievous Sneak Preview Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith General Grievous Sneak Preview figure (2005) — released months before the film. Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:44, id:"088", name:"General Grievous — Four Lightsaber Attack (ROTS)",
+    price:24, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS General Grievous Four Lightsaber Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith General Grievous Four Lightsaber Attack figure (2005). Features four spinning lightsaber blades. Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:45, id:"106", name:"Darth Vader — Lightsaber Attack (ROTS)",
+    price:24, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Darth Vader Lightsaber Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Darth Vader Lightsaber Attack figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:46, id:"117", name:"Count Dooku — Sith Lord (ROTS)",
+    price:24, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Count Dooku Sith Lord Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Count Dooku Sith Lord figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:47, id:"018", name:"Darth Vader — Rebuild Darth Vader! (Operating Table)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card wear, light dust",
+    title:"Star Wars ROTS Darth Vader Rebuild Operating Table Scene Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Darth Vader "Rebuild Darth Vader" Operating Table figure (2005). Depicts the iconic transformation scene. Carded with card wear and light dust.
+
+Condition: Carded (MOC). Card wear. Light dust.
+Year: 2005
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:48, id:"025", name:"Star Wars Missions — Card Game Lot (Decipher)",
+    price:22, year:1990, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — loose cards, played condition, see photo",
+    title:"Star Wars Decipher Missions Card Game Trading Cards Lot 1990s",
+    desc:`Star Wars Missions trading/mission card game lot by Decipher (1990s). Various cards in played condition; see photo for exact contents.
+
+Condition: Loose cards. Played condition. See photo.
+Year: 1990s
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:49, id:"040", name:"Prince Xizor — with Energy Blade Shields (Shadows of the Empire)",
+    price:22, year:1996, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge/corner wear, light shelf wear",
+    title:"Star Wars Shadows of the Empire Prince Xizor Energy Blade Shields MOC 1996",
+    desc:`Star Wars Shadows of the Empire Prince Xizor with Energy Blade Shields (1996). One of the harder-to-find figures from the Shadows of the Empire tie-in line. Carded with edge/corner wear and light shelf wear.
+
+Condition: Carded (MOC). Card edge/corner wear. Light shelf wear.
+Year: 1996
+Ships carefully packed from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:50, id:"041", name:"Padmé — Republic Senator (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear, light dust",
+    title:"Star Wars ROTS Padme Amidala Republic Senator Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Padmé Republic Senator figure (2005). Carded with edge wear and light dust.
+
+Condition: Carded (MOC). Card edge wear. Light dust.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:51, id:"042", name:"Yoda — Spinning Attack (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear, light dust",
+    title:"Star Wars ROTS Yoda Spinning Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Yoda Spinning Attack figure (2005). Carded with edge wear and light dust.
+
+Condition: Carded (MOC). Card edge wear. Light dust.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:52, id:"051", name:"Yoda — Firing Cannon (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear, light dust",
+    title:"Star Wars ROTS Yoda Firing Cannon Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Yoda Firing Cannon figure (2005). Carded with edge wear and light dust.
+
+Condition: Carded (MOC). Card edge wear. Light dust.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:53, id:"053", name:"Anakin Skywalker — Changes to Darth Vader (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Anakin Skywalker Changes to Darth Vader Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Anakin Skywalker "Changes to Darth Vader" transformation figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:54, id:"060", name:"Padmé Naberrie — with Pod Race View Screen (Episode I)",
+    price:22, year:1999, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), CommTech chip, card edge wear",
+    title:"Star Wars Ep I Padme Naberrie Pod Race View Screen CommTech Chip MOC 1999",
+    desc:`Star Wars Episode I Padmé Naberrie with Pod Race View Screen and CommTech chip (1999). Carded with edge wear.
+
+Condition: Carded (MOC). Includes CommTech chip. Card edge wear.
+Year: 1999
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:55, id:"061", name:"Captain Antilles — Fan's Choice #5",
+    price:22, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars Saga Captain Antilles Fan's Choice #5 Figure MOC 2002",
+    desc:`Star Wars Saga Captain Antilles — Fan's Choice #5 (2002). A fan-voted figure that's harder to find. Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:56, id:"064", name:"Jango Fett — Quick-Draw Action (AOTC)",
+    price:22, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Jango Fett Quick-Draw Action Figure MOC 2002",
+    desc:`Star Wars Attack of the Clones Jango Fett Quick-Draw Action figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:57, id:"066", name:"Darth Maul — Lightsaber Slashing Action (Episode I)",
+    price:22, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars Episode I Darth Maul Lightsaber Slashing Action Figure MOC 2002",
+    desc:`Star Wars Episode I Darth Maul Lightsaber Slashing Action figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:58, id:"068", name:"Jango Fett — Kamino Escape (AOTC)",
+    price:22, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Jango Fett Kamino Escape Figure MOC 2002",
+    desc:`Star Wars Attack of the Clones Jango Fett Kamino Escape figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:59, id:"071", name:"Tusken Raider — with Massiff (AOTC)",
+    price:22, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Tusken Raider with Massiff Creature Figure MOC 2002",
+    desc:`Star Wars Attack of the Clones Tusken Raider with Massiff creature (2002). Figure and creature on original card with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:60, id:"074", name:"General Grievous — Exploding Body (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS General Grievous Exploding Body Feature Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith General Grievous Exploding Body figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:61, id:"075", name:"Aayla Secura — Jedi Knight (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Aayla Secura Jedi Knight Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Aayla Secura Jedi Knight figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:62, id:"081", name:"Destroyer Droid — Firing Arm-Blaster (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Destroyer Droid Firing Arm-Blaster Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Destroyer Droid with Firing Arm-Blaster action (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:63, id:"082", name:"Clone Pilot — Firing Cannon (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Clone Pilot Firing Cannon Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Clone Pilot with Firing Cannon (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:64, id:"084", name:"Luminara Unduli — Jedi Master (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Luminara Unduli Jedi Master Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Luminara Unduli Jedi Master figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:65, id:"085", name:"Tion Medon — Sneak Preview (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Tion Medon Sneak Preview Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Tion Medon Sneak Preview figure (2005) — early release before the film. Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:66, id:"086", name:"Clone Commander — Battle Gear (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Clone Commander Battle Gear Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Clone Commander Battle Gear figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:67, id:"087", name:"Palpatine — Lightsaber Attack (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Palpatine Lightsaber Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Palpatine Lightsaber Attack figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:68, id:"090", name:"Royal Guard (Blue) — Senate Security (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), blue variant, card edge wear",
+    title:"Star Wars ROTS Royal Guard Blue Senate Security Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Royal Guard Blue variant — Senate Security (2005). The blue variant is a more sought-after version. Carded with edge wear.
+
+Condition: Carded (MOC). Blue variant. Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:69, id:"091", name:"Kit Fisto — Jedi Master (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Kit Fisto Jedi Master Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Kit Fisto Jedi Master figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:70, id:"092", name:"Clone Trooper — Quick-Draw Attack (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Clone Trooper Quick-Draw Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Clone Trooper Quick-Draw Attack figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:71, id:"094", name:"R2-D2 — Droid Attack (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS R2-D2 Droid Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith R2-D2 Droid Attack figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:72, id:"096", name:"Grievous's Bodyguard — Battle Attack (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Grievous Bodyguard Battle Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Grievous's Bodyguard Battle Attack figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:73, id:"097", name:"Shaak Ti — Jedi Master (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Shaak Ti Jedi Master Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Shaak Ti Jedi Master figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:74, id:"099", name:"Obi-Wan Kenobi — Jedi Kick (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Obi-Wan Kenobi Jedi Kick Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Obi-Wan Kenobi Jedi Kick figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:75, id:"100", name:"Obi-Wan Kenobi — Slashing Attack (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Obi-Wan Kenobi Slashing Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Obi-Wan Kenobi Slashing Attack figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:76, id:"101", name:"R4-G9 — Sneak Preview (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS R4-G9 Astromech Droid Sneak Preview Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith R4-G9 astromech droid Sneak Preview figure (2005) — early release before the film. Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:77, id:"102", name:"C-3PO — Protocol Droid (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS C-3PO Protocol Droid Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith C-3PO Protocol Droid figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:78, id:"105", name:"Emperor Palpatine — Firing Force Lightning (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Emperor Palpatine Firing Force Lightning MOC 2005",
+    desc:`Star Wars Revenge of the Sith Emperor Palpatine Firing Force Lightning figure (2005). Features Force lightning action. Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:79, id:"108", name:"Plo Koon — Jedi Master (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Plo Koon Jedi Master Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Plo Koon Jedi Master figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:80, id:"109", name:"Chewbacca — Wookiee Rage (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Chewbacca Wookiee Rage Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Chewbacca Wookiee Rage figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:81, id:"112", name:"Mace Windu — Force Combat (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Mace Windu Force Combat Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Mace Windu Force Combat figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:82, id:"113", name:"Royal Guard (Red) — Senate Security (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), red variant, card edge wear",
+    title:"Star Wars ROTS Royal Guard Red Senate Security Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Royal Guard Red variant — Senate Security (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Red variant. Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:83, id:"114", name:"Vader's Medical Droid (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Vader's Medical Droid Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Vader's Medical Droid figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:84, id:"115", name:"Clone Trooper — Super Articulation (ROTS)",
+    price:22, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Clone Trooper Super Articulation Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Clone Trooper Super Articulation figure (2005). Highly poseable version with multiple points of articulation. Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:85, id:"004", name:"Luke Skywalker (X-Wing Pilot) — Cup & Figure",
+    price:18, year:2004, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed, old clearance sticker, box wear",
+    title:"Star Wars ESB Luke Skywalker X-Wing Pilot Cup and Figure Set Boxed 2004",
+    desc:`Star Wars Empire Strikes Back Luke Skywalker X-Wing Pilot figure with collector glass/cup (2004). Boxed with old store clearance sticker and some box wear.
+
+Condition: Boxed. Old store clearance sticker. Box wear.
+Year: 2004
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:86, id:"044", name:"Battle Droid — Separatist Army (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Battle Droid Separatist Army Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Battle Droid Separatist Army figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:87, id:"047", name:"Watto — Mos Espa Junk Dealer (AOTC)",
+    price:18, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Watto Mos Espa Junk Dealer Figure MOC 2002",
+    desc:`Star Wars Attack of the Clones Watto Mos Espa Junk Dealer figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:88, id:"048", name:"Saesee Tiin — Jedi Master (AOTC)",
+    price:18, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Saesee Tiin Jedi Master Figure MOC 2002",
+    desc:`Star Wars Attack of the Clones Saesee Tiin Jedi Master figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:89, id:"054", name:"Obi-Wan Kenobi — Revenge of the Sith",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Obi-Wan Kenobi Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Obi-Wan Kenobi figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:90, id:"055", name:"Zam Wesell — Bounty Hunter (AOTC)",
+    price:18, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Zam Wesell Bounty Hunter Clawdite Figure MOC 2002",
+    desc:`Star Wars Attack of the Clones Zam Wesell bounty hunter figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:91, id:"059", name:"Geonosian Warrior — Attack of the Clones",
+    price:18, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Geonosian Warrior Figure MOC 2002",
+    desc:`Star Wars Attack of the Clones Geonosian Warrior figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:92, id:"063", name:"Teemto Pagalies — Pod Racer (Episode I)",
+    price:18, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars Episode I Teemto Pagalies Pod Racer Pilot Figure MOC 2002",
+    desc:`Star Wars The Phantom Menace Teemto Pagalies Pod Racer pilot figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:93, id:"065", name:"Endor Rebel Soldier — Return of the Jedi",
+    price:18, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars Return of the Jedi Endor Rebel Soldier Figure MOC 2002",
+    desc:`Star Wars Return of the Jedi Endor Rebel Soldier figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:94, id:"067", name:"Orn Free Taa — Twi'lek Senator (AOTC)",
+    price:18, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars AOTC Orn Free Taa Twi'lek Senator Alien Figure MOC 2002",
+    desc:`Star Wars Attack of the Clones Orn Free Taa alien Twi'lek senator figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:95, id:"069", name:"Ellorrs Madak — Power of the Jedi",
+    price:18, year:2001, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars Power of the Jedi Ellorrs Madak Duros Cantina Figure MOC 2001",
+    desc:`Star Wars Power of the Jedi Ellorrs Madak (Duros alien) Mos Eisley Cantina figure (2001). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2001
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:96, id:"070", name:"Djas Puhr — Alien Bounty Hunter (A New Hope)",
+    price:18, year:2002, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ANH Djas Puhr Alien Bounty Hunter Sakiyan Figure MOC 2002",
+    desc:`Star Wars A New Hope Djas Puhr alien Sakiyan bounty hunter figure (2002). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2002
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:97, id:"076", name:"Anakin Skywalker — Lightsaber Attack (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Anakin Skywalker Lightsaber Attack Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Anakin Skywalker Lightsaber Attack figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:98, id:"077", name:"Mas Amedda — Republic Senator (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Mas Amedda Republic Senator Chagrian Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Mas Amedda Republic Senator (Chagrian alien) figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:99, id:"078", name:"Utapau Warrior — Utapau Security (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Utapau Warrior Security Force Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Utapau Warrior Security figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:100, id:"080", name:"Zett Jukassa — Jedi Padawan (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Zett Jukassa Jedi Padawan Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Zett Jukassa Jedi Padawan figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:101, id:"083", name:"Neimoidian Warrior — Revenge of the Sith",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Neimoidian Warrior Separatist Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Neimoidian Warrior figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:102, id:"089", name:"Bail Organa — Republic Senator (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Bail Organa Republic Senator Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Bail Organa Republic Senator figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:103, id:"093", name:"Super Battle Droid — Firing Arm-Blaster (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Super Battle Droid Firing Arm-Blaster Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Super Battle Droid with Firing Arm-Blaster action (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:104, id:"095", name:"Agen Kolar — Jedi Master (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Agen Kolar Jedi Master Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Agen Kolar Jedi Master figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:105, id:"098", name:"Chancellor Palpatine — Supreme Chancellor (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Chancellor Palpatine Supreme Chancellor Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Chancellor Palpatine Supreme Chancellor figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:106, id:"103", name:"Mon Mothma — Republic Senator (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Mon Mothma Republic Senator Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Mon Mothma Republic Senator figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:107, id:"104", name:"Wookiee Warrior — Wookiee Battle Bash (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Wookiee Warrior Battle Bash Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Wookiee Warrior Battle Bash figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:108, id:"107", name:"Ki-Adi-Mundi — Jedi Master (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Ki-Adi-Mundi Jedi Master Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Ki-Adi-Mundi Jedi Master figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:109, id:"110", name:"Polis Massan — Medic (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Polis Massan Alien Medic Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Polis Massan alien medic figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:110, id:"111", name:"Tarfful — Firing Bowcaster (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Tarfful Wookiee Firing Bowcaster Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Tarfful Wookiee Firing Bowcaster figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:111, id:"116", name:"Saesee Tiin — Jedi Master (ROTS)",
+    price:18, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — carded (MOC), card edge wear",
+    title:"Star Wars ROTS Saesee Tiin Jedi Master Figure MOC 2005",
+    desc:`Star Wars Revenge of the Sith Saesee Tiin Jedi Master figure (2005). Carded with edge wear.
+
+Condition: Carded (MOC). Card edge wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:112, id:"014", name:"Episode II: Attack of the Clones — Daily Calendar",
+    price:14, year:2003, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed daily calendar, opened, box edge wear",
+    title:"Star Wars Attack of the Clones AOTC 2003 Daily Desk Calendar Cedco",
+    desc:`Star Wars Episode II: Attack of the Clones 2003 daily desk calendar by Cedco. Box has been opened but calendar may be unused. Box edge wear.
+
+Condition: Boxed daily calendar. Opened. Box edge wear.
+Year: 2003
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:113, id:"024", name:"A Year of Galactic Trivia — Daily Calendar (2005)",
+    price:14, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — boxed daily calendar, light box wear",
+    title:"Star Wars A Year of Galactic Trivia 2005 Daily Desk Calendar Cedco",
+    desc:`Star Wars A Year of Galactic Trivia 2005 daily desk calendar by Cedco. Box shows light wear. A fun daily trivia collectible.
+
+Condition: Boxed daily calendar. Light box wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:114, id:"034", name:"Burger King Episode III Crowns (x2)",
+    price:12, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — promo paper crowns, light wear and creasing",
+    title:"Star Wars Revenge of the Sith Burger King Promo Paper Crowns Set 2 2005",
+    desc:`Star Wars Revenge of the Sith Burger King promotional paper crowns (set of 2, 2005). Light wear and minor creasing. Fun Episode III fast-food collectible.
+
+Condition: Used promo paper crowns. Light wear and minor creasing.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:115, id:"052", name:"Chewbacca Plush — Burger King Episode III Promo",
+    price:12, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — plush, light wear, manufacturer tag attached",
+    title:"Star Wars ROTS Burger King Chewbacca Plush Promo Figure with Tag 2005",
+    desc:`Star Wars Revenge of the Sith Burger King promotional Chewbacca plush (2005). Light wear; original manufacturer tag still attached. A fun Episode III fast-food collectible.
+
+Condition: Plush. Light wear. Manufacturer tag attached.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  },
+  {
+    rank:116, id:"016", name:"Revenge of the Sith — Comic Book #4 of 4 (Dark Horse)",
+    price:10, year:2005, condLabel:"Used", condClass:"cond-used",
+    condEbay:"Used — reading copy, cover and spine wear",
+    title:"Star Wars Revenge of the Sith Dark Horse Comics Issue #4 of 4 2005",
+    desc:`Star Wars Revenge of the Sith comic book #4 of 4 by Dark Horse Comics (2005). Reading-copy condition with cover and spine wear.
+
+Condition: Reading copy. Cover and spine wear.
+Year: 2005
+Ships from Puerto Rico (USPS Priority Mail with tracking).`
+  }
+];
+
+const photoState = {};
+
+function setPhoto(id, idx) {
+  const wrap = document.getElementById('ph-' + id);
+  if (!wrap) return;
+  const n = PHOTOS[id] || 1;
+  idx = ((idx % n) + n) % n;
+  photoState[id] = idx;
+  wrap.querySelector('img').src = `${BASE}img/${id}-${idx+1}.jpg`;
+  wrap.querySelectorAll('.photo-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+}
+
+function changePhoto(id, delta) {
+  setPhoto(id, (photoState[id] || 0) + delta);
+}
+
+let activeMin = 0;
+
+function setPriceFilter(btn) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeMin = parseInt(btn.dataset.min);
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const filtered = listings.filter(item => {
+    const matchesPrice = item.price >= activeMin;
+    if (!matchesPrice) return false;
+    if (!q) return true;
+    return item.name.toLowerCase().includes(q) || item.title.toLowerCase().includes(q) || item.id.includes(q);
+  });
+  renderGrid(filtered);
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 1800);
+  }).catch(() => {
+    const el = btn.previousElementSibling;
+    const range = document.createRange(); range.selectNodeContents(el);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    btn.textContent = 'Selected';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
+  });
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderGrid(items) {
+  const grid = document.getElementById('grid');
+  const bar = document.getElementById('count-bar');
+  bar.textContent = `Showing ${items.length} of ${listings.length} items`;
+  grid.innerHTML = '';
+  if (items.length === 0) {
+    grid.innerHTML = '<p class="no-results">No items match your search.</p>';
+    return;
+  }
+  items.forEach(item => {
+    const tl = item.title.length;
+    const pct = Math.min(tl / 80, 1);
+    const warn = tl > 80;
+    const card = document.createElement('div');
+    card.className = 'card';
+    const titleJson = JSON.stringify(item.title);
+    const descJson = JSON.stringify(item.desc);
+    const numPhotos = PHOTOS[item.id] || 1;
+    const photoUrls = Array.from({length: numPhotos}, (_, i) => `${BASE}img/${item.id}-${i+1}.jpg`);
+    const photoHtml = `
+      <div class="card-photo" id="ph-${item.id}">
+        <img src="${photoUrls[0]}" alt="${escapeHtml(item.name)}" onerror="this.closest('.card-photo').style.display='none'">
+        ${numPhotos > 1 ? `
+        <button class="photo-prev" onclick="changePhoto('${item.id}',-1)">&#8249;</button>
+        <button class="photo-next" onclick="changePhoto('${item.id}',1)">&#8250;</button>
+        <div class="photo-nav">${photoUrls.map((_,i)=>`<div class="photo-dot${i===0?' active':''}" onclick="setPhoto('${item.id}',${i})"></div>`).join('')}</div>` : ''}
+      </div>`;
+    card.innerHTML = `${photoHtml}
+      <div class="card-head">
+        <div class="rank">${item.rank}</div>
+        <div class="card-title-wrap">
+          <p class="item-name">${escapeHtml(item.name)}</p>
+          <div class="tags">
+            <span class="tag price">$${item.price}</span>
+            <span class="tag ${item.condClass}">${item.condLabel}</span>
+            <span class="tag">${item.year}</span>
+            <span class="tag">#${item.id}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <p class="field-label">eBay Title <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(80 char max)</span></p>
+          <div class="copy-row">
+            <div class="copy-box">${escapeHtml(item.title)}</div>
+            <button class="copy-btn" onclick="copyText(${titleJson}, this)">Copy</button>
+          </div>
+          <div class="char-bar">
+            <span class="char-count${warn?' warn':''}">${tl}/80</span>
+            <div class="char-track"><div class="char-fill${warn?' warn':''}" style="width:${Math.round(pct*100)}%"></div></div>
+          </div>
+        </div>
+        <div>
+          <p class="field-label">eBay Condition</p>
+          <div class="copy-box" style="font-size:12.5px">${escapeHtml(item.condEbay)}</div>
+        </div>
+        <div>
+          <p class="field-label">Description</p>
+          <div class="copy-row">
+            <div class="copy-box" style="font-size:12.5px">${escapeHtml(item.desc)}</div>
+            <button class="copy-btn" onclick="copyText(${descJson}, this)">Copy</button>
+          </div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+renderGrid(listings);
+</script>
+</body>
+</html>
